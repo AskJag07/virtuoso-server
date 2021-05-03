@@ -7,9 +7,10 @@ import (
 
 func Init() {
 
+	corsWrapper := NewCorsWrapper()
 	r := NewRouter()
 
-	if err := http.ListenAndServe(":8080", r); err != nil {
+	if err := http.ListenAndServe(":8080", corsWrapper.Handler(r)); err != nil {
 		log.Fatalf("Error in ListenAndServe: %s", err)
 	}
 
