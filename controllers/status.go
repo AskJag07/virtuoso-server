@@ -3,12 +3,14 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/AskJag07/virtuoso-server/services"
+	"github.com/gin-gonic/gin"
 )
 
-var StatusController = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func Status() gin.HandlerFunc {
 
-	message := "Everything's all right!"
-	services.ResponseJSON(message, w, http.StatusOK)
+	return func(c *gin.Context) {
 
-})
+		c.JSON(http.StatusOK, "Operational")
+
+	}
+}

@@ -1,24 +1,43 @@
 package server
 
 import (
-	"github.com/codegangsta/negroni"
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/AskJag07/virtuoso-server/config"
 	"github.com/AskJag07/virtuoso-server/controllers"
-	"github.com/AskJag07/virtuoso-server/middlewares"
+	"github.com/AskJag07/virtuoso-server/middleware"
 )
 
-func NewRouter() *mux.Router {
+func NewRouter(client *mongo.Client) *gin.Engine {
 
-	r := mux.NewRouter()
+	router := gin.New()
+	router.Use(gin.Logger())
 
-	r.Handle("/", controllers.StatusController).Methods("GET")
+	Production := config.GetVar("PRODUCTION")
+	if Production == "true" {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
-	jwtMiddleware := middlewares.AuthMiddleware()
-	r.Handle("/restricted", negroni.New(
-		negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
-		negroni.Wrap(controllers.TestController))).Methods("GET")
+	router.GET("/", controllers.Status())
 
-	return r
+	router.POST("/auth/register", controllers.Register(client))
+	router.POST("/auth/login", controllers.Login(client))
+
+	router.Use(middleware.Authentication(client))
+
+	router.GET("/api-1", func(c *gin.Context) {
+
+		c.JSON(200, gin.H{"success": "Access granted for api-1"})
+
+	})
+
+	router.GET("/api-2", func(c *gin.Context) {
+
+		c.JSON(200, gin.H{"success": "Access granted for api-2"})
+
+	})
+
+	return router
 
 }

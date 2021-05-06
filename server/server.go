@@ -1,17 +1,21 @@
 package server
 
 import (
-	"log"
-	"net/http"
+	"github.com/AskJag07/virtuoso-server/config"
+	"github.com/AskJag07/virtuoso-server/db"
 )
 
 func Init() {
 
-	corsWrapper := NewCorsWrapper()
-	r := NewRouter()
+	port := config.GetVar("PORT")
 
-	if err := http.ListenAndServe(":8080", corsWrapper.Handler(r)); err != nil {
-		log.Fatalf("Error in ListenAndServe: %s", err)
+	if port == "" {
+		port = "8888"
 	}
+
+	client := db.Init()
+	router := NewRouter(client)
+
+	router.Run(":" + port)
 
 }
