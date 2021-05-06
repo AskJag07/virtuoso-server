@@ -25,8 +25,7 @@ func Register(client *mongo.Client) gin.HandlerFunc {
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 		var user models.User
 
-		usersCollection := client.Database("Auth").Collection("users")
-		defer client.Disconnect(context.Background())
+		usersCollection := client.Database("App").Collection("users")
 
 		defer cancel()
 		if err := c.BindJSON(&user); err != nil {
@@ -41,7 +40,7 @@ func Register(client *mongo.Client) gin.HandlerFunc {
 			return
 		}
 
-		count, err := usersCollection.CountDocuments(ctx, bson.M{"email": user.Email})
+		count, err := usersCollection.CountDocuments(ctx, bson.M{"email": *user.Email})
 		defer cancel()
 		if err != nil {
 			log.Panic(err)
@@ -53,7 +52,7 @@ func Register(client *mongo.Client) gin.HandlerFunc {
 		user.Password = &password
 
 		if count > 0 {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "this email or phone number already exists"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "this email already exists"})
 			return
 		}
 
@@ -61,9 +60,8 @@ func Register(client *mongo.Client) gin.HandlerFunc {
 		user.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 		user.ID = primitive.NewObjectID()
 		user.User_id = user.ID.Hex()
-		token, refreshToken, _ := helpers.GenerateAllTokens(*user.Email, *user.Full_name, *user.School, *user.Standard, user.User_id)
+		token, _ := helpers.GenerateAllTokens(*user.Email, *user.Full_name, *user.School, *user.Standard, user.User_id)
 		user.Token = &token
-		user.Refresh_token = &refreshToken
 
 		resultInsertionNumber, insertErr := usersCollection.InsertOne(ctx, user)
 		if insertErr != nil {
@@ -87,8 +85,7 @@ func Login(client *mongo.Client) gin.HandlerFunc {
 		var user models.User
 		var foundUser models.User
 
-		usersCollection := client.Database("Auth").Collection("users")
-		defer client.Disconnect(context.Background())
+		usersCollection := client.Database("App").Collection("users")
 
 		defer cancel()
 		if err := c.BindJSON(&user); err != nil {
@@ -99,22 +96,22 @@ func Login(client *mongo.Client) gin.HandlerFunc {
 		err := usersCollection.FindOne(ctx, bson.M{"email": user.Email}).Decode(&foundUser)
 		defer cancel()
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "login or passowrd is incorrect"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "email is incorrect"})
 			return
 		}
 
-		passwordIsValid, msg := helpers.VerifyPassword(*user.Password, *foundUser.Password)
+		passwordIsValid := helpers.VerifyPassword(*user.Password, *foundUser.Password)
 		defer cancel()
 		if !passwordIsValid {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "password is incorrect"})
 			return
 		}
 
-		token, refreshToken, _ := helpers.GenerateAllTokens(*foundUser.Email, *foundUser.Full_name, *foundUser.School, *foundUser.Standard, foundUser.User_id)
+		token, _ := helpers.GenerateAllTokens(*foundUser.Email, *foundUser.Full_name, *foundUser.School, *foundUser.Standard, foundUser.User_id)
 
-		helpers.UpdateAllTokens(token, refreshToken, foundUser.User_id, client)
+		helpers.UpdateAllTokens(token, foundUser.User_id, client)
 
-		c.JSON(http.StatusOK, foundUser)
+		c.JSON(http.StatusOK, "Authorized.")
 
 	}
 
