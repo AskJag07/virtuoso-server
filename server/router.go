@@ -1,6 +1,9 @@
 package server
 
 import (
+	"log"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 
@@ -12,7 +15,13 @@ import (
 func NewRouter(client *mongo.Client) *gin.Engine {
 
 	Production := config.GetVar("PRODUCTION")
-	if Production == "true" {
+
+	production, err := strconv.ParseBool(Production)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	if production {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
