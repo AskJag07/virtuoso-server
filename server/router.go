@@ -11,13 +11,13 @@ import (
 
 func NewRouter(client *mongo.Client) *gin.Engine {
 
-	router := gin.New()
-	router.Use(gin.Logger())
-
 	Production := config.GetVar("PRODUCTION")
 	if Production == "true" {
 		gin.SetMode(gin.ReleaseMode)
 	}
+
+	router := gin.New()
+	router.Use(gin.Logger())
 
 	router.GET("/", controllers.Status())
 
