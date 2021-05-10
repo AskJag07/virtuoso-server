@@ -17,13 +17,12 @@ import (
 
 var SecretKey string = config.GetVar("SECRET_KEY")
 
-func GenerateAllTokens(email string, fullName string, school string, standard int, uid string) (signedToken string, err error) {
+func GenerateAllTokens(fullName string, session int, uid string, admin bool) (signedToken string, err error) {
 
 	claims := &models.SignedDetails{
-		Email:     email,
 		Full_name: fullName,
-		School:    school,
-		Standard:  standard,
+		Session:   session,
+		Admin:     admin,
 		Uid:       uid,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Local().Add(time.Second * time.Duration(1)).Unix(),

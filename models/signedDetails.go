@@ -3,10 +3,9 @@ package models
 import "github.com/dgrijalva/jwt-go"
 
 type SignedDetails struct {
-	Email     string
 	Full_name string
-	School    string
-	Standard  int
+	Session   int
 	Uid       string
+	Admin     bool
 	jwt.StandardClaims
 }
