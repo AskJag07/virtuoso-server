@@ -31,10 +31,7 @@ func Register(client *mongo.Client) gin.HandlerFunc {
 		if err := c.BindJSON(&user); err != nil {
 			c.JSON(
 				http.StatusBadRequest,
-				gin.H{
-					"error":  err.Error(),
-					"status": http.StatusBadRequest,
-				},
+				gin.H{"error":  err.Error()},
 			)
 			return
 		}
@@ -44,10 +41,7 @@ func Register(client *mongo.Client) gin.HandlerFunc {
 		if validationErr != nil {
 			c.JSON(
 				http.StatusBadRequest,
-				gin.H{
-					"error":  validationErr.Error(),
-					"status": http.StatusBadRequest,
-				},
+				gin.H{"error":  validationErr.Error()},
 			)
 			return
 		}
@@ -58,10 +52,7 @@ func Register(client *mongo.Client) gin.HandlerFunc {
 			log.Panic(err)
 			c.JSON(
 				http.StatusInternalServerError,
-				gin.H{
-					"error":  "Unable to check for user email.",
-					"status": http.StatusInternalServerError,
-				},
+				gin.H{"error":  "Unable to check for user email."},
 			)
 			return
 		}
@@ -71,11 +62,8 @@ func Register(client *mongo.Client) gin.HandlerFunc {
 
 		if count > 0 {
 			c.JSON(
-				http.StatusConflict,
-				gin.H{
-					"error":  "this email already exists",
-					"status": http.StatusConflict,
-				},
+				http.StatusOK,
+				gin.H{"error":  "Email already exists. Please log in."},
 			)
 			return
 		}
@@ -92,10 +80,7 @@ func Register(client *mongo.Client) gin.HandlerFunc {
 		if insertErr != nil {
 			c.JSON(
 				http.StatusInternalServerError,
-				gin.H{
-					"error":  "Unable to register new user.",
-					"status": http.StatusInternalServerError,
-				},
+				gin.H{"error":  "Unable to register new user."},
 			)
 			return
 		}
@@ -103,10 +88,7 @@ func Register(client *mongo.Client) gin.HandlerFunc {
 
 		c.JSON(
 			http.StatusOK,
-			gin.H{
-				"status": http.StatusOK,
-				"token":  user.Token,
-			},
+			gin.H{"token":  user.Token},
 		)
 
 	}
