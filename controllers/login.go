@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -32,7 +33,7 @@ func Login(client *mongo.Client) gin.HandlerFunc {
 			return
 		}
 
-		err := usersCollection.FindOne(ctx, bson.M{"email": user.Email}).Decode(&foundUser)
+		err := usersCollection.FindOne(ctx, bson.M{"email": strings.ToLower(*user.Email)}).Decode(&foundUser)
 		defer cancel()
 		if err != nil {
 			c.JSON(
