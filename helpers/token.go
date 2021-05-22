@@ -25,7 +25,7 @@ func GenerateAllTokens(fullName string, session int, uid string, admin bool) (si
 		Admin:     admin,
 		Uid:       uid,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Local().Add(time.Second * time.Duration(1)).Unix(),
+			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(24)).Unix(),
 		},
 	}
 
