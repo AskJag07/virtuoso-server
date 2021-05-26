@@ -23,17 +23,11 @@ func Students(client *mongo.Client) gin.HandlerFunc {
 		usersCollection := client.Database("App").Collection("users")
 
 		projection := bson.D{
-			{Key: "ID", Value: 0},
 			{Key: "full_name", Value: 1},
 			{Key: "email", Value: 1},
-			{Key: "Password", Value: 0},
 			{Key: "standard", Value: 1},
-			{Key: "session", Value: 0},
-			{Key: "token", Value: 0},
 			{Key: "created_at", Value: 1},
 			{Key: "updated_at", Value: 1},
-			{Key: "user_id", Value: 0},
-			{Key: "admin", Value: 0},
 		}
 		cur, err := usersCollection.Find(ctx, bson.M{"admin": false}, options.Find().SetProjection(projection))
 		defer cancel()
