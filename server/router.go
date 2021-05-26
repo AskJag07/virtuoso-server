@@ -26,13 +26,15 @@ func NewRouter(client *mongo.Client) *gin.Engine {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	router := gin.New()
-	router.Use(gin.Logger())
-	router.Use(cors.New(cors.Config{
+	r := gin.New()
+	r.Use(gin.Logger())
+	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{"http://localhost:8000"},
 		AllowMethods: []string{"OPTIONS", "POST", "GET"},
 		AllowHeaders: []string{"Content-Type", "token"},
 	}))
+
+	router := r.Group("/api")
 
 	router.GET("/", controllers.Status())
 
@@ -43,6 +45,6 @@ func NewRouter(client *mongo.Client) *gin.Engine {
 
 	router.GET("/students", controllers.Students(client))
 
-	return router
+	return r
 
 }
