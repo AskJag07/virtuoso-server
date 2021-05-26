@@ -8,7 +8,7 @@ import (
 
 func GetVar(key string) string {
 
-	viper.SetConfigFile(".env")
+	viper.SetConfigFile("/home/admin/bin/.env")
 	err := viper.ReadInConfig()
 
 	if err != nil {
