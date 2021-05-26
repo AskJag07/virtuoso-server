@@ -18,7 +18,7 @@ func Login(client *mongo.Client) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 
-		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		var ctx, cancel = context.WithTimeout(context.Background(), 30*time.Second)
 		var user models.User
 		var foundUser models.User
 
@@ -59,7 +59,9 @@ func Login(client *mongo.Client) gin.HandlerFunc {
 
 		c.JSON(
 			http.StatusOK,
-			gin.H{"token": foundUser.Token},
+			gin.H{
+				"token":     foundUser.Token,
+			},
 		)
 
 	}

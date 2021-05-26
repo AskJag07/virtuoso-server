@@ -10,6 +10,7 @@ import (
 
 	"github.com/AskJag07/virtuoso-server/config"
 	"github.com/AskJag07/virtuoso-server/controllers"
+	"github.com/AskJag07/virtuoso-server/middleware"
 )
 
 func NewRouter(client *mongo.Client) *gin.Engine {
@@ -30,13 +31,17 @@ func NewRouter(client *mongo.Client) *gin.Engine {
 	router.Use(cors.New(cors.Config{
 		AllowOrigins: []string{"http://localhost:8000"},
 		AllowMethods: []string{"OPTIONS", "POST", "GET"},
-		AllowHeaders: []string{"Content-Type"},
+		AllowHeaders: []string{"Content-Type", "token"},
 	}))
 
 	router.GET("/", controllers.Status())
 
 	router.POST("/auth/register", controllers.Register(client))
 	router.POST("/auth/login", controllers.Login(client))
+
+	router.Use(middleware.Authentication(client))
+
+	router.GET("/students", controllers.Students(client))
 
 	return router
 

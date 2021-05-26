@@ -77,7 +77,7 @@ func UpdateAllTokens(signedToken string, userId string, client *mongo.Client) {
 
 	usersCollection := client.Database("App").Collection("users")
 
-	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+	var ctx, cancel = context.WithTimeout(context.Background(), 30*time.Second)
 
 	var updateObj primitive.D
 
