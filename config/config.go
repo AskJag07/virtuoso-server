@@ -8,7 +8,7 @@ import (
 
 func GetVar(key string) string {
 
-	viper.SetConfigFile("/home/admin/bin/.env")
+	viper.SetConfigFile("/var/www/api.govirtuoso.org/bin/.env")
 	err := viper.ReadInConfig()
 
 	if err != nil {
