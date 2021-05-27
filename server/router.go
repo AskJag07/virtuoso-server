@@ -28,11 +28,7 @@ func NewRouter(client *mongo.Client) *gin.Engine {
 
 	r := gin.New()
 	r.Use(gin.Logger())
-	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"https://govirtuoso.org"},
-		AllowMethods: []string{"OPTIONS", "POST", "GET"},
-		AllowHeaders: []string{"Content-Type", "token"},
-	}))
+	r.Use(cors.Default())
 
 	router := r.Group("/api")
 
