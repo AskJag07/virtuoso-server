@@ -29,7 +29,7 @@ func NewRouter(client *mongo.Client) *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"http://localhost:8000"},
+		AllowOrigins: []string{"https://govirtuoso.org"},
 		AllowMethods: []string{"OPTIONS", "POST", "GET"},
 		AllowHeaders: []string{"Content-Type", "token"},
 	}))
