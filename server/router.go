@@ -4,7 +4,6 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 
@@ -28,7 +27,6 @@ func NewRouter(client *mongo.Client) *gin.Engine {
 
 	r := gin.New()
 	r.Use(gin.Logger())
-	r.Use(cors.Default())
 
 	router := r.Group("/api")
 
